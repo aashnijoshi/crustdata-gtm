@@ -25,24 +25,9 @@ against Crustdata's buyer criteria, surfaces buy signals, generates a personaliz
 ## Running locally
 
 1. Clone the repo
-2. Install dependencies
-
-\`\`\`bash
-npm install
-\`\`\`
-
-3. Create `.env.local` in the project root
-
-\`\`\`
-ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxx
-\`\`\`
-
-4. Run the dev server
-
-\`\`\`bash
-npm run dev
-\`\`\`
-
+2. Install dependencies using `npm install`
+3. Create `.env.local` in the project root with `ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxx`
+4. Run the dev server: `npm run dev`
 5. Open `localhost:3000`
 
 ## What's next
