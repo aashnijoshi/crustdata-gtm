@@ -36,11 +36,15 @@ Right now the tool uses Claude to infer all enrichment data. The obvious v2 repl
 inference with Crustdata's actual APIs:
 
 - **Company Search API** → replace estimated firmographics with verified headcount, funding stage, total raised
-- **People Search API** → replace inferred personas with real champions, real titles, real emails
+- **People Search API** → replace inferred personas with real champions, real titles, real verified emails
 - **Watcher API** → replace static signals with live triggers — funding rounds, promotions, job changes — and fire outbound automatically when they hit
 - **Web Search API** → pull recent news and job postings per account before generating emails so every sequence references something that happened in the last 30 days
 
-The full loop: company name in → Crustdata enriches → Claude writes the sequence → Resend fires the emails. Fully automated outbound from a single input.
+**For actually sending outbound**, the stack would be:
+- **Resend** for email delivery — clean developer API, 3k free emails/month, simple to set up
+- Flow: company name in → Crustdata People Search finds the champion + verified email → Claude writes the personalized sequence → Resend fires Day 1 immediately and schedules Day 4 and Day 9 automatically
+
+The full loop: one company name input → fully automated outbound. 
 
 ## Built by
 
