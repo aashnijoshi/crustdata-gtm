@@ -22,6 +22,7 @@ interface Persona {
   name: string;
   role: string;
   painQuote: string;
+  founderName?: string;
 }
 
 interface Routing {
@@ -33,6 +34,12 @@ interface Email {
   step: string;
   subject: string;
   body: string;
+}
+
+interface ClearbitData {
+  name: string;
+  domain: string;
+  logo: string;
 }
 
 interface EnrichedData {
@@ -47,6 +54,7 @@ interface EnrichedData {
   persona: Persona;
   routing: Routing;
   emails: Email[];
+  clearbit?: ClearbitData | null;
 }
 
 interface Lead {
@@ -54,6 +62,7 @@ interface Lead {
   company: string;
   description: string;
   enrichedData: EnrichedData;
+  isLoadingDetails?: boolean;
 }
 
 // Seed data
@@ -61,13 +70,13 @@ const seedLeads: Lead[] = [
   {
     id: '1',
     company: 'Gem',
-    description: 'AI-powered recruiting platform, Series C, ~150 employees. Helps talent teams source, engage, and hire candidates. Heavy data enrichment needs — relies on live people data to surface candidates and track job changes in real time.',
+    description: 'AI-powered recruiting platform, Series C, ~150 employees. Helps talent teams source, engage, and hire candidates. Heavy data enrichment needs -- relies on live people data to surface candidates and track job changes in real time.',
     enrichedData: {
       tagline: 'AI-powered recruiting platform',
       industry: 'HR Technology',
-      employees: '130–170',
+      employees: '130-170',
       stage: 'Series C',
-      arr: '$20–35M',
+      arr: '$20-35M',
       icpScore: 91,
       icpFit: {
         buildsAIAgents: true,
@@ -85,27 +94,28 @@ const seedLeads: Lead[] = [
       persona: {
         name: 'Priya Nair',
         role: 'Head of Engineering',
-        painQuote: 'Candidate data goes stale within weeks — we need job change signals the moment they happen, not after they\'ve already moved on.',
+        painQuote: 'Candidate data goes stale within weeks. We need job change signals the moment they happen, not after they\'ve already moved on.',
+        founderName: 'Steve Bartel',
       },
       routing: {
         decision: 'Book Meeting',
-        reason: 'Strong ICP fit. Gem is a data consumer building on live people data — exactly what Crustdata enables.',
+        reason: 'Strong ICP fit. Gem is a data consumer building on live people data, exactly what Crustdata enables.',
       },
       emails: [
         {
           step: 'Day 1',
-          subject: 'Real-time candidate signals for Gem',
-          body: 'Hi Priya,\n\nLove what you\'re building at Gem — AI-powered recruiting is a massive opportunity.\n\nCurious how you handle real-time job change signals today. We power that layer for recruiting and GTM teams that need to act on candidate moves the moment they happen.\n\nWorth a 15-min chat?\n\nAashni from Crustdata',
+          subject: 'Steve, real-time candidate signals for Gem',
+          body: 'Hi Priya,\n\nLove what you\'re building at Gem. AI-powered recruiting is a massive opportunity.\n\nCurious how you handle real-time job change signals today. We power that layer for recruiting and GTM teams that need to act on candidate moves the moment they happen.\n\nWorth a 15-min chat?\n\nAashni from Crustdata',
         },
         {
           step: 'Day 4',
           subject: 'Re: Real-time candidate signals for Gem',
-          body: 'Hi Priya,\n\nFollowing up — we just shipped our Watcher API, which fires webhooks the moment someone changes jobs, gets promoted, or joins a target company.\n\nFor a platform like Gem, that could mean triggering outreach or surfacing warm candidates automatically.\n\nHappy to show you a quick demo.\n\nAashni from Crustdata',
+          body: 'Hi Priya,\n\nFollowing up. We just shipped our Watcher API, which fires webhooks the moment someone changes jobs, gets promoted, or joins a target company.\n\nFor a platform like Gem, that could mean triggering outreach or surfacing warm candidates automatically.\n\nHappy to show you a quick demo.\n\nAashni from Crustdata',
         },
         {
           step: 'Day 9',
           subject: 'Gem + Crustdata',
-          body: 'Hi Priya,\n\nLast note — we work with several recruiting platforms that use our People Search API to enrich candidate profiles with live data.\n\nIf candidate data freshness is ever a bottleneck, we should talk.\n\nAashni from Crustdata',
+          body: 'Hi Priya,\n\nLast note. We work with several recruiting platforms that use our People Search API to enrich candidate profiles with live data.\n\nIf candidate data freshness is ever a bottleneck, we should talk.\n\nAashni from Crustdata',
         },
       ],
     },
@@ -117,9 +127,9 @@ const seedLeads: Lead[] = [
     enrichedData: {
       tagline: 'AI-powered outbound automation',
       industry: 'Sales Technology',
-      employees: '30–40',
+      employees: '30-40',
       stage: 'Series A',
-      arr: '$3–5M',
+      arr: '$3-5M',
       icpScore: 88,
       icpFit: {
         buildsAIAgents: true,
@@ -131,13 +141,14 @@ const seedLeads: Lead[] = [
       signals: [
         { type: 'green', label: 'AI Agent Architecture', detail: 'Building autonomous outbound agents that require real-time data signals' },
         { type: 'green', label: 'Intent Data Consumer', detail: 'Product relies heavily on buying signals and intent data' },
-        { type: 'green', label: 'Right Stage', detail: 'Series A with 35 employees — ideal technical buyer profile' },
+        { type: 'green', label: 'Right Stage', detail: 'Series A with 35 employees, ideal technical buyer profile' },
         { type: 'yellow', label: 'Early Revenue', detail: 'May have budget constraints typical of Series A' },
       ],
       persona: {
         name: 'Sarah Kim',
         role: 'CTO & Co-founder',
         painQuote: 'Our AI agents are only as good as the data we feed them. Stale data means irrelevant outreach.',
+        founderName: 'Austin Hughes',
       },
       routing: {
         decision: 'Book Meeting',
@@ -146,22 +157,31 @@ const seedLeads: Lead[] = [
       emails: [
         {
           step: 'Day 1',
-          subject: 'Data for Unify AI agents',
-          body: 'Hi Sarah,\n\nLove what you are building at Unify — AI agents for outbound is the future.\n\nCurious how you are handling real-time signals like job changes and promotions. We power that layer for similar AI-native companies.\n\nWould love to learn more about your data architecture.\n\nAashni from Crustdata',
+          subject: 'Austin, data for Unify AI agents',
+          body: 'Hi Sarah,\n\nLove what you are building at Unify. AI agents for outbound is the future.\n\nCurious how you are handling real-time signals like job changes and promotions. We power that layer for similar AI-native companies.\n\nWould love to learn more about your data architecture.\n\nAashni from Crustdata',
         },
         {
           step: 'Day 4',
           subject: 'Re: Data for Unify AI agents',
-          body: 'Hi Sarah,\n\nFollowing up — we just shipped a feature that might be relevant: real-time job change webhooks.\n\nImagine triggering an AI-generated email the moment a prospect gets promoted. Some of our customers are seeing 3x reply rates.\n\nHappy to show you a quick demo.\n\nAashni from Crustdata',
+          body: 'Hi Sarah,\n\nFollowing up. We just shipped a feature that might be relevant: real-time job change webhooks.\n\nImagine triggering an AI-generated email the moment a prospect gets promoted. Some of our customers are seeing 3x reply rates.\n\nHappy to show you a quick demo.\n\nAashni from Crustdata',
         },
         {
           step: 'Day 9',
           subject: 'Unify + Crustdata',
-          body: 'Hi Sarah,\n\nLast reach out — we have a few AI SDR companies using our APIs and would love to add Unify to that list.\n\nNo pressure, but if real-time B2B data ever becomes a bottleneck, we should talk.\n\nAashni from Crustdata',
+          body: 'Hi Sarah,\n\nLast reach out. We have a few AI SDR companies using our APIs and would love to add Unify to that list.\n\nNo pressure, but if real-time B2B data ever becomes a bottleneck, we should talk.\n\nAashni from Crustdata',
         },
       ],
     },
   },
+];
+
+const YC_COMPANIES = [
+  { company: 'Amplemarket', description: 'AI-powered sales engagement platform, Series B, ~100 employees. Helps sales teams with prospecting, outreach, and follow-up automation using live contact data.' },
+  { company: 'Pave', description: 'Compensation benchmarking and planning platform, Series B, ~80 employees. Helps companies make data-driven compensation decisions using real-time market data.' },
+  { company: 'Gem', description: 'AI recruiting platform, Series C, ~150 employees. Talent sourcing and candidate engagement tool that relies heavily on live people data and job change signals.' },
+  { company: 'Lexi', description: 'AI legal assistant for startups, Series A, ~30 employees. Automates contract review and legal workflows for technical founding teams.' },
+  { company: 'Telescope', description: 'AI-powered investor relations platform, Series A, ~25 employees. Helps founders track and engage investors using company signal data.' },
+  { company: 'Koala', description: 'AI sales intelligence platform, Series A, ~40 employees. Identifies high-intent buyers using product usage and behavioral signals combined with company data.' },
 ];
 
 const loadingMessages = [
@@ -171,7 +191,7 @@ const loadingMessages = [
   'Routing lead...',
 ];
 
-export default function GTMOSPage() {
+export default function OrbitPage() {
   const [leads, setLeads] = useState<Lead[]>(seedLeads);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(seedLeads[0].id);
   const [activeTab, setActiveTab] = useState<'icp' | 'signals' | 'outbound' | 'routing'>('icp');
@@ -182,6 +202,12 @@ export default function GTMOSPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState(0);
+  const [showSendForm, setShowSendForm] = useState(false);
+  const [sendEmail, setSendEmail] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [sendSuccess, setSendSuccess] = useState(false);
 
   const selectedLead = leads.find((l) => l.id === selectedLeadId) || null;
 
@@ -190,13 +216,85 @@ export default function GTMOSPage() {
   }, []);
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading || isImporting) {
       const interval = setInterval(() => {
         setLoadingMessageIndex((prev) => (prev + 1) % loadingMessages.length);
       }, 2000);
       return () => clearInterval(interval);
     }
-  }, [isLoading]);
+  }, [isLoading, isImporting]);
+
+  const enrichAccount = async (company: string, description: string): Promise<Lead> => {
+    const id = Date.now().toString() + Math.random().toString(36).slice(2);
+
+    // Phase 1: Get score quickly + Clearbit data
+    const scoreResponse = await fetch('/api/enrich', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ company, description, phase: 'score' }),
+    });
+
+    if (!scoreResponse.ok) throw new Error('Failed to enrich (score phase)');
+    const scoreData = await scoreResponse.json();
+
+    // Create lead with score data immediately, mark details as loading
+    const partialLead: Lead = {
+      id,
+      company,
+      description,
+      isLoadingDetails: true,
+      enrichedData: {
+        tagline: scoreData.tagline || '',
+        industry: scoreData.industry || '',
+        employees: scoreData.employees || '',
+        stage: scoreData.stage || '',
+        arr: scoreData.arr || '',
+        icpScore: scoreData.icpScore || 0,
+        icpFit: scoreData.icpFit || {
+          buildsAIAgents: false,
+          needsLiveData: false,
+          technicalBuyers: false,
+          rightStage: false,
+          useCaseFit: false,
+        },
+        routing: scoreData.routing || { decision: 'Nurture' as const, reason: '' },
+        signals: [],
+        persona: { name: '', role: '', painQuote: '' },
+        emails: [],
+        clearbit: scoreData.clearbit || null,
+      },
+    };
+
+    // Add partial lead to the list right away
+    setLeads((prev) => [partialLead, ...prev]);
+    setSelectedLeadId(id);
+
+    // Phase 2: Get full details
+    const detailsResponse = await fetch('/api/enrich', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ company, description, phase: 'details', scoreData }),
+    });
+
+    if (!detailsResponse.ok) throw new Error('Failed to enrich (details phase)');
+    const detailsData = await detailsResponse.json();
+
+    // Update lead with full details
+    const fullLead: Lead = {
+      ...partialLead,
+      isLoadingDetails: false,
+      enrichedData: {
+        ...partialLead.enrichedData,
+        signals: detailsData.signals || [],
+        persona: detailsData.persona || { name: '', role: '', painQuote: '' },
+        emails: detailsData.emails || [],
+      },
+    };
+
+    setLeads((prev) => prev.map((l) => (l.id === id ? fullLead : l)));
+
+    return fullLead;
+  };
 
   const handleAddAccount = async () => {
     if (!newCompany.trim() || !newDescription.trim()) return;
@@ -205,25 +303,7 @@ export default function GTMOSPage() {
     setLoadingMessageIndex(0);
 
     try {
-      const response = await fetch('/api/enrich', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ company: newCompany, description: newDescription }),
-      });
-
-      if (!response.ok) throw new Error('Failed to enrich');
-
-      const enrichedData: EnrichedData = await response.json();
-
-      const newLead: Lead = {
-        id: Date.now().toString(),
-        company: newCompany,
-        description: newDescription,
-        enrichedData,
-      };
-
-      setLeads((prev) => [newLead, ...prev]);
-      setSelectedLeadId(newLead.id);
+      await enrichAccount(newCompany, newDescription);
       setNewCompany('');
       setNewDescription('');
       setShowAddForm(false);
@@ -231,6 +311,61 @@ export default function GTMOSPage() {
       console.error('Error enriching account:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleImportYC = async () => {
+    setIsImporting(true);
+    setImportProgress(0);
+
+    try {
+      for (let i = 0; i < YC_COMPANIES.length; i++) {
+        const { company, description } = YC_COMPANIES[i];
+        setImportProgress(i + 1);
+        try {
+          await enrichAccount(company, description);
+        } catch (error) {
+          console.error(`Failed to enrich ${company}:`, error);
+        }
+        // 1 second delay between each to avoid rate limits
+        if (i < YC_COMPANIES.length - 1) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+    } finally {
+      setIsImporting(false);
+      setImportProgress(0);
+    }
+  };
+
+  const handleSendSequence = async () => {
+    if (!sendEmail.trim() || !selectedLead) return;
+
+    setIsSending(true);
+    setSendSuccess(false);
+
+    try {
+      const response = await fetch('/api/send-sequence', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emails: selectedLead.enrichedData.emails,
+          toEmail: sendEmail,
+          toName: selectedLead.enrichedData.persona.name,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to send');
+      setSendSuccess(true);
+      setTimeout(() => {
+        setSendSuccess(false);
+        setShowSendForm(false);
+        setSendEmail('');
+      }, 3000);
+    } catch (error) {
+      console.error('Error sending sequence:', error);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -247,15 +382,34 @@ export default function GTMOSPage() {
   };
 
   const getRoutingEmoji = (decision: string) => {
-    if (decision === 'Book Meeting') return '📅';
-    if (decision === 'Nurture') return '🔄';
-    return '✗';
+    if (decision === 'Book Meeting') return '\u{1F4C5}';
+    if (decision === 'Nurture') return '\u{1F504}';
+    return '\u2717';
   };
 
   const getSignalDotColor = (type: string) => {
     if (type === 'green') return 'bg-green-500';
     if (type === 'yellow') return 'bg-amber-500';
     return 'bg-red-500';
+  };
+
+  const CompanyAvatar = ({ lead, size = 'sm' }: { lead: Lead; size?: 'sm' | 'md' }) => {
+    const sizeClass = size === 'md' ? 'h-10 w-10' : 'h-8 w-8';
+    const textSize = size === 'md' ? 'text-base' : 'text-sm';
+    if (lead.enrichedData.clearbit?.logo) {
+      return (
+        <img
+          src={lead.enrichedData.clearbit.logo}
+          alt={lead.company}
+          className={cn(sizeClass, 'rounded-md object-contain')}
+        />
+      );
+    }
+    return (
+      <div className={cn('flex items-center justify-center rounded-md bg-muted font-mono font-medium text-foreground', sizeClass, textSize)}>
+        {lead.company[0]}
+      </div>
+    );
   };
 
   const highFitCount = leads.filter((l) => l.enrichedData.icpScore >= 80).length;
@@ -268,7 +422,7 @@ export default function GTMOSPage() {
         <div className="mx-auto flex h-full max-w-[1600px] items-center justify-between">
           <div className="flex items-center gap-3">
             <h1 className="font-[family-name:var(--font-fraunces)] text-xl font-semibold tracking-tight text-foreground">
-              GTM OS
+              Orbit
             </h1>
             <span className="rounded-md bg-accent/10 px-2 py-0.5 font-mono text-xs font-medium text-accent">
               Crustdata
@@ -297,12 +451,21 @@ export default function GTMOSPage() {
                 </h2>
                 <span className="font-mono text-xs text-muted-foreground">{leads.length}</span>
               </div>
-              <button
-                onClick={() => setShowAddForm(!showAddForm)}
-                className="w-full rounded-md border border-dashed border-border bg-background px-3 py-2 font-mono text-xs font-medium text-muted-foreground transition-colors hover:border-accent hover:text-accent"
-              >
-                + Add Account
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowAddForm(!showAddForm)}
+                  className="flex-1 rounded-md border border-dashed border-border bg-background px-3 py-2 font-mono text-xs font-medium text-muted-foreground transition-colors hover:border-accent hover:text-accent"
+                >
+                  + Add Account
+                </button>
+                <button
+                  onClick={handleImportYC}
+                  disabled={isImporting}
+                  className="flex-1 rounded-md border border-dashed border-border bg-background px-3 py-2 font-mono text-xs font-medium text-muted-foreground transition-colors hover:border-accent hover:text-accent disabled:opacity-50"
+                >
+                  {isImporting ? `Importing ${importProgress}/${YC_COMPANIES.length}` : 'Import YC'}
+                </button>
+              </div>
             </div>
 
             {/* Add Form */}
@@ -335,7 +498,7 @@ export default function GTMOSPage() {
             )}
 
             {/* Loading State */}
-            {isLoading && (
+            {(isLoading || isImporting) && (
               <div className="border-b border-border bg-accent/5 p-4">
                 <div className="flex items-center gap-3">
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
@@ -363,11 +526,14 @@ export default function GTMOSPage() {
                   style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'backwards' }}
                 >
                   <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-sans text-sm font-medium text-foreground">{lead.company}</h3>
-                      <p className="mt-0.5 font-mono text-xs text-muted-foreground">
-                        {lead.enrichedData.tagline}
-                      </p>
+                    <div className="flex items-start gap-2">
+                      <CompanyAvatar lead={lead} size="sm" />
+                      <div>
+                        <h3 className="font-sans text-sm font-medium text-foreground">{lead.company}</h3>
+                        <p className="mt-0.5 font-mono text-xs text-muted-foreground">
+                          {lead.enrichedData.tagline || 'Loading...'}
+                        </p>
+                      </div>
                     </div>
                     <span
                       className={cn(
@@ -460,9 +626,7 @@ export default function GTMOSPage() {
                       >
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted font-mono text-sm font-medium text-foreground">
-                              {lead.company[0]}
-                            </div>
+                            <CompanyAvatar lead={lead} size="sm" />
                             <span className="font-sans text-sm font-medium text-foreground">
                               {lead.company}
                             </span>
@@ -493,11 +657,14 @@ export default function GTMOSPage() {
             // Account Detail View
             <div className="animate-in fade-in slide-in-from-bottom-2">
               {/* Header */}
-              <div className="mb-6">
-                <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-foreground">
-                  {selectedLead.company}
-                </h2>
-                <p className="mt-1 font-sans text-sm text-muted-foreground">{selectedLead.description}</p>
+              <div className="mb-6 flex items-start gap-4">
+                <CompanyAvatar lead={selectedLead} size="md" />
+                <div>
+                  <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-foreground">
+                    {selectedLead.company}
+                  </h2>
+                  <p className="mt-1 font-sans text-sm text-muted-foreground">{selectedLead.description}</p>
+                </div>
               </div>
 
               {/* Tabs */}
@@ -571,15 +738,15 @@ export default function GTMOSPage() {
                           { key: 'buildsAIAgents', label: 'Builds AI agents or automation' },
                           { key: 'needsLiveData', label: 'Needs real-time people/company data' },
                           { key: 'technicalBuyers', label: 'Technical/developer-led buyers' },
-                          { key: 'rightStage', label: 'Right stage (Series A–C, 20–200 employees)' },
+                          { key: 'rightStage', label: 'Right stage (Series A-C, 20-200 employees)' },
                           { key: 'useCaseFit', label: 'GTM, sales, recruiting, or investment use case' },
                         ].map((criterion) => (
                           <div key={criterion.key} className="flex items-center justify-between border-b border-border pb-3 last:border-0 last:pb-0">
                             <span className="font-sans text-sm text-foreground">{criterion.label}</span>
                             {selectedLead.enrichedData.icpFit[criterion.key as keyof IcpFit] ? (
-                              <span className="font-mono text-sm font-medium text-green-600">✓ Yes</span>
+                              <span className="font-mono text-sm font-medium text-green-600">{'\u2713'} Yes</span>
                             ) : (
-                              <span className="font-mono text-sm font-medium text-red-600">✗ No</span>
+                              <span className="font-mono text-sm font-medium text-red-600">{'\u2717'} No</span>
                             )}
                           </div>
                         ))}
@@ -591,51 +758,116 @@ export default function GTMOSPage() {
                       <h3 className="mb-4 font-mono text-xs font-medium uppercase tracking-wider text-muted-foreground">
                         Champion Persona
                       </h3>
-                      <div className="border-l-2 border-accent pl-4">
-                        <p className="font-mono text-sm font-medium text-foreground">{selectedLead.enrichedData.persona.name}</p>
-                        <p className="font-mono text-xs text-muted-foreground">{selectedLead.enrichedData.persona.role}</p>
-                        <p className="mt-3 font-sans text-sm italic text-muted-foreground">
-                          &ldquo;{selectedLead.enrichedData.persona.painQuote}&rdquo;
-                        </p>
-                      </div>
+                      {selectedLead.isLoadingDetails ? (
+                        <div className="flex items-center gap-3 py-4">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+                          <span className="animate-pulse font-mono text-xs text-accent">Loading persona...</span>
+                        </div>
+                      ) : (
+                        <div className="border-l-2 border-accent pl-4">
+                          <p className="font-mono text-sm font-medium text-foreground">{selectedLead.enrichedData.persona.name}</p>
+                          <p className="font-mono text-xs text-muted-foreground">{selectedLead.enrichedData.persona.role}</p>
+                          <p className="mt-3 font-sans text-sm italic text-muted-foreground">
+                            &ldquo;{selectedLead.enrichedData.persona.painQuote}&rdquo;
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'signals' && (
-                  <div className="grid grid-cols-2 gap-4">
-                    {selectedLead.enrichedData.signals.map((signal, index) => (
-                      <div key={index} className="rounded-lg border border-border bg-card p-4 shadow-sm">
-                        <div className="flex items-start gap-3">
-                          <span className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', getSignalDotColor(signal.type))} />
-                          <div>
-                            <p className="font-sans text-sm font-medium text-foreground">{signal.label}</p>
-                            <p className="mt-1 font-sans text-sm text-muted-foreground">{signal.detail}</p>
+                  selectedLead.isLoadingDetails ? (
+                    <div className="flex items-center gap-3 py-8">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+                      <span className="animate-pulse font-mono text-xs text-accent">Loading signals...</span>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-4">
+                      {selectedLead.enrichedData.signals.map((signal, index) => (
+                        <div key={index} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                          <div className="flex items-start gap-3">
+                            <span className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', getSignalDotColor(signal.type))} />
+                            <div>
+                              <p className="font-sans text-sm font-medium text-foreground">{signal.label}</p>
+                              <p className="mt-1 font-sans text-sm text-muted-foreground">{signal.detail}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )
                 )}
 
                 {activeTab === 'outbound' && (
-                  <div className="space-y-4">
-                    {selectedLead.enrichedData.emails.map((email, index) => (
-                      <div key={index} className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
-                        <div className="flex items-center gap-3 border-b border-border bg-muted/50 px-4 py-3">
-                          <span className="rounded-md bg-foreground px-2 py-1 font-mono text-xs font-medium text-background">
-                            {email.step}
-                          </span>
-                          <span className="font-sans text-sm font-medium text-foreground">{email.subject}</span>
+                  selectedLead.isLoadingDetails ? (
+                    <div className="flex items-center gap-3 py-8">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+                      <span className="animate-pulse font-mono text-xs text-accent">Generating outbound sequence...</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {selectedLead.enrichedData.emails.map((email, index) => (
+                        <div key={index} className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+                          <div className="flex items-center gap-3 border-b border-border bg-muted/50 px-4 py-3">
+                            <span className="rounded-md bg-foreground px-2 py-1 font-mono text-xs font-medium text-background">
+                              {email.step}
+                            </span>
+                            <span className="font-sans text-sm font-medium text-foreground">{email.subject}</span>
+                          </div>
+                          <div className="p-4">
+                            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-muted-foreground">
+                              {email.body}
+                            </pre>
+                          </div>
                         </div>
-                        <div className="p-4">
-                          <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-muted-foreground">
-                            {email.body}
-                          </pre>
-                        </div>
+                      ))}
+
+                      {/* Send Sequence */}
+                      <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                        {sendSuccess ? (
+                          <div className="flex items-center gap-2 text-green-600">
+                            <span className="font-mono text-sm font-medium">{'\u2713'} Day 1 email sent successfully!</span>
+                          </div>
+                        ) : showSendForm ? (
+                          <div className="space-y-3">
+                            <p className="font-mono text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                              Send Day 1 Email
+                            </p>
+                            <input
+                              type="email"
+                              placeholder="Recipient email address"
+                              value={sendEmail}
+                              onChange={(e) => setSendEmail(e.target.value)}
+                              className="w-full rounded-md border border-border bg-background px-3 py-2 font-sans text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                onClick={handleSendSequence}
+                                disabled={isSending || !sendEmail.trim()}
+                                className="rounded-md bg-foreground px-4 py-2 font-mono text-xs font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-50"
+                              >
+                                {isSending ? 'Sending...' : 'Send Email'}
+                              </button>
+                              <button
+                                onClick={() => { setShowSendForm(false); setSendEmail(''); }}
+                                className="rounded-md border border-border px-4 py-2 font-mono text-xs font-medium text-muted-foreground transition-colors hover:bg-muted"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setShowSendForm(true)}
+                            className="w-full rounded-md bg-foreground px-4 py-2 font-mono text-xs font-medium text-background transition-opacity hover:opacity-90"
+                          >
+                            Send Sequence
+                          </button>
+                        )}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )
                 )}
 
                 {activeTab === 'routing' && (

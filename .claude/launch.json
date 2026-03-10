@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "next-dev",
+      "runtimeExecutable": "/bin/sh",
+      "runtimeArgs": ["-c", "export PATH=/usr/local/bin:$PATH && cd /Users/aashnijoshi/Downloads/v0-crustdata-gtm/.claude/worktrees/blissful-greider && exec node ./node_modules/.bin/next dev"],
+      "port": 3000
+    }
+  ]
+}

@@ -23,8 +23,8 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'GTM OS | Crustdata',
-  description: 'GTM Intelligence Dashboard for Crustdata - Real-time B2B data infrastructure',
+  title: 'Orbit | Crustdata',
+  description: 'Orbit Intelligence Dashboard for Crustdata - Real-time B2B data infrastructure',
   generator: 'v0.app',
   icons: {
     icon: [
