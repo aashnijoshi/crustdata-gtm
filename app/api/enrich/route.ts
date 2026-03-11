@@ -129,6 +129,8 @@ async function callClaude(apiKey: string, systemPrompt: string, userMessage: str
   return JSON.parse(content);
 }
 
+export const maxDuration = 30;
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -158,7 +160,7 @@ export async function POST(request: NextRequest) {
           apiKey,
           SCORE_PROMPT,
           `Analyze this company for Crustdata ICP fit:\n\nCompany: ${company}\nDescription: ${description}`,
-          400
+          200
         ),
       ]);
 
@@ -174,7 +176,7 @@ export async function POST(request: NextRequest) {
         apiKey,
         DETAILS_PROMPT,
         `Company: ${company}\nDescription: ${description}\nICP Score: ${scoreData?.icpScore || 'unknown'}\nRouting: ${scoreData?.routing?.decision || 'unknown'}`,
-        1000
+        800
       );
 
       return NextResponse.json(detailsData);
@@ -224,7 +226,7 @@ rewrite sentences to avoid them entirely.`;
       apiKey,
       fullPrompt,
       `Analyze this company for Crustdata ICP fit:\n\nCompany: ${company}\nDescription: ${description}${clearbitContext}`,
-      1200
+      800
     );
 
     return NextResponse.json({

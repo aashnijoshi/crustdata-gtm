@@ -175,15 +175,6 @@ const seedLeads: Lead[] = [
   },
 ];
 
-const YC_COMPANIES = [
-  { company: 'Amplemarket', description: 'AI-powered sales engagement platform, Series B, ~100 employees. Helps sales teams with prospecting, outreach, and follow-up automation using live contact data.' },
-  { company: 'Pave', description: 'Compensation benchmarking and planning platform, Series B, ~80 employees. Helps companies make data-driven compensation decisions using real-time market data.' },
-  { company: 'Gem', description: 'AI recruiting platform, Series C, ~150 employees. Talent sourcing and candidate engagement tool that relies heavily on live people data and job change signals.' },
-  { company: 'Lexi', description: 'AI legal assistant for startups, Series A, ~30 employees. Automates contract review and legal workflows for technical founding teams.' },
-  { company: 'Telescope', description: 'AI-powered investor relations platform, Series A, ~25 employees. Helps founders track and engage investors using company signal data.' },
-  { company: 'Koala', description: 'AI sales intelligence platform, Series A, ~40 employees. Identifies high-intent buyers using product usage and behavioral signals combined with company data.' },
-];
-
 const loadingMessages = [
   'Enriching account...',
   'Scoring ICP fit...',
@@ -202,8 +193,7 @@ export default function OrbitPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const [isImporting, setIsImporting] = useState(false);
-  const [importProgress, setImportProgress] = useState(0);
+  const [isLoadingScore, setIsLoadingScore] = useState(false);
   const [showSendForm, setShowSendForm] = useState(false);
   const [sendEmail, setSendEmail] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -216,125 +206,98 @@ export default function OrbitPage() {
   }, []);
 
   useEffect(() => {
-    if (isLoading || isImporting) {
+    if (isLoading) {
       const interval = setInterval(() => {
         setLoadingMessageIndex((prev) => (prev + 1) % loadingMessages.length);
       }, 2000);
       return () => clearInterval(interval);
     }
-  }, [isLoading, isImporting]);
-
-  const enrichAccount = async (company: string, description: string): Promise<Lead> => {
-    const id = Date.now().toString() + Math.random().toString(36).slice(2);
-
-    // Phase 1: Get score quickly + Clearbit data
-    const scoreResponse = await fetch('/api/enrich', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ company, description, phase: 'score' }),
-    });
-
-    if (!scoreResponse.ok) throw new Error('Failed to enrich (score phase)');
-    const scoreData = await scoreResponse.json();
-
-    // Create lead with score data immediately, mark details as loading
-    const partialLead: Lead = {
-      id,
-      company,
-      description,
-      isLoadingDetails: true,
-      enrichedData: {
-        tagline: scoreData.tagline || '',
-        industry: scoreData.industry || '',
-        employees: scoreData.employees || '',
-        stage: scoreData.stage || '',
-        arr: scoreData.arr || '',
-        icpScore: scoreData.icpScore || 0,
-        icpFit: scoreData.icpFit || {
-          buildsAIAgents: false,
-          needsLiveData: false,
-          technicalBuyers: false,
-          rightStage: false,
-          useCaseFit: false,
-        },
-        routing: scoreData.routing || { decision: 'Nurture' as const, reason: '' },
-        signals: [],
-        persona: { name: '', role: '', painQuote: '' },
-        emails: [],
-        clearbit: scoreData.clearbit || null,
-      },
-    };
-
-    // Add partial lead to the list right away
-    setLeads((prev) => [partialLead, ...prev]);
-    setSelectedLeadId(id);
-
-    // Phase 2: Get full details
-    const detailsResponse = await fetch('/api/enrich', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ company, description, phase: 'details', scoreData }),
-    });
-
-    if (!detailsResponse.ok) throw new Error('Failed to enrich (details phase)');
-    const detailsData = await detailsResponse.json();
-
-    // Update lead with full details
-    const fullLead: Lead = {
-      ...partialLead,
-      isLoadingDetails: false,
-      enrichedData: {
-        ...partialLead.enrichedData,
-        signals: detailsData.signals || [],
-        persona: detailsData.persona || { name: '', role: '', painQuote: '' },
-        emails: detailsData.emails || [],
-      },
-    };
-
-    setLeads((prev) => prev.map((l) => (l.id === id ? fullLead : l)));
-
-    return fullLead;
-  };
+  }, [isLoading]);
 
   const handleAddAccount = async () => {
     if (!newCompany.trim() || !newDescription.trim()) return;
 
+    const company = newCompany;
+    const description = newDescription;
+    const id = Date.now().toString() + Math.random().toString(36).slice(2);
+
     setIsLoading(true);
+    setIsLoadingScore(true);
     setLoadingMessageIndex(0);
+    setNewCompany('');
+    setNewDescription('');
+    setShowAddForm(false);
 
     try {
-      await enrichAccount(newCompany, newDescription);
-      setNewCompany('');
-      setNewDescription('');
-      setShowAddForm(false);
+      // Phase 1: Get score quickly + Clearbit data
+      const scoreResponse = await fetch('/api/enrich', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ company, description, phase: 'score' }),
+      });
+
+      if (!scoreResponse.ok) throw new Error('Failed to enrich (score phase)');
+      const scoreData = await scoreResponse.json();
+
+      // Create lead with score data immediately, mark details as loading
+      const partialLead: Lead = {
+        id,
+        company,
+        description,
+        isLoadingDetails: true,
+        enrichedData: {
+          tagline: scoreData.tagline || '',
+          industry: scoreData.industry || '',
+          employees: scoreData.employees || '',
+          stage: scoreData.stage || '',
+          arr: scoreData.arr || '',
+          icpScore: scoreData.icpScore || 0,
+          icpFit: scoreData.icpFit || {
+            buildsAIAgents: false,
+            needsLiveData: false,
+            technicalBuyers: false,
+            rightStage: false,
+            useCaseFit: false,
+          },
+          routing: scoreData.routing || { decision: 'Nurture' as const, reason: '' },
+          signals: [],
+          persona: { name: '', role: '', painQuote: '' },
+          emails: [],
+          clearbit: scoreData.clearbit || null,
+        },
+      };
+
+      // Render score data immediately
+      setLeads((prev) => [partialLead, ...prev]);
+      setSelectedLeadId(id);
+      setIsLoadingScore(false);
+
+      // Phase 2: Get full details in background
+      const detailsResponse = await fetch('/api/enrich', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ company, description, phase: 'details', scoreData }),
+      });
+
+      if (!detailsResponse.ok) throw new Error('Failed to enrich (details phase)');
+      const detailsData = await detailsResponse.json();
+
+      // Update lead with full details
+      setLeads((prev) => prev.map((l) => (l.id === id ? {
+        ...partialLead,
+        isLoadingDetails: false,
+        enrichedData: {
+          ...partialLead.enrichedData,
+          signals: detailsData.signals || [],
+          persona: detailsData.persona || { name: '', role: '', painQuote: '' },
+          emails: detailsData.emails || [],
+        },
+      } : l)));
     } catch (error) {
       console.error('Error enriching account:', error);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleImportYC = async () => {
-    setIsImporting(true);
-    setImportProgress(0);
-
-    try {
-      for (let i = 0; i < YC_COMPANIES.length; i++) {
-        const { company, description } = YC_COMPANIES[i];
-        setImportProgress(i + 1);
-        try {
-          await enrichAccount(company, description);
-        } catch (error) {
-          console.error(`Failed to enrich ${company}:`, error);
-        }
-        // 1 second delay between each to avoid rate limits
-        if (i < YC_COMPANIES.length - 1) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-    } finally {
-      setIsImporting(false);
-      setImportProgress(0);
+      setIsLoadingScore(false);
     }
   };
 
@@ -451,21 +414,12 @@ export default function OrbitPage() {
                 </h2>
                 <span className="font-mono text-xs text-muted-foreground">{leads.length}</span>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setShowAddForm(!showAddForm)}
-                  className="flex-1 rounded-md border border-dashed border-border bg-background px-3 py-2 font-mono text-xs font-medium text-muted-foreground transition-colors hover:border-accent hover:text-accent"
-                >
-                  + Add Account
-                </button>
-                <button
-                  onClick={handleImportYC}
-                  disabled={isImporting}
-                  className="flex-1 rounded-md border border-dashed border-border bg-background px-3 py-2 font-mono text-xs font-medium text-muted-foreground transition-colors hover:border-accent hover:text-accent disabled:opacity-50"
-                >
-                  {isImporting ? `Importing ${importProgress}/${YC_COMPANIES.length}` : 'Import YC'}
-                </button>
-              </div>
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="w-full rounded-md border border-dashed border-border bg-background px-3 py-2 font-mono text-xs font-medium text-muted-foreground transition-colors hover:border-accent hover:text-accent"
+              >
+                + Add Account
+              </button>
             </div>
 
             {/* Add Form */}
@@ -498,7 +452,7 @@ export default function OrbitPage() {
             )}
 
             {/* Loading State */}
-            {(isLoading || isImporting) && (
+            {isLoading && (
               <div className="border-b border-border bg-accent/5 p-4">
                 <div className="flex items-center gap-3">
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
@@ -691,41 +645,55 @@ export default function OrbitPage() {
                   <div className="space-y-6">
                     {/* Metrics Grid */}
                     <div className="grid grid-cols-4 gap-4">
-                      <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-                        <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">ICP Score</p>
-                        <div className="mt-2 flex items-end gap-2">
-                          <p className={cn('font-[family-name:var(--font-fraunces)] text-3xl font-semibold', getScoreColor(selectedLead.enrichedData.icpScore))}>
-                            {selectedLead.enrichedData.icpScore}
-                          </p>
-                          <span className="mb-1 font-mono text-xs text-muted-foreground">/ 100</span>
-                        </div>
-                        <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-                          <div
-                            className="h-full rounded-full bg-accent transition-all duration-700"
-                            style={{ width: `${selectedLead.enrichedData.icpScore}%` }}
-                          />
-                        </div>
-                      </div>
-                      <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-                        <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Routing</p>
-                        <div className="mt-2">
-                          <span className={cn('inline-block rounded-md px-2 py-1 font-mono text-sm font-medium', getRoutingColor(selectedLead.enrichedData.routing.decision))}>
-                            {selectedLead.enrichedData.routing.decision}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-                        <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Stage</p>
-                        <p className="mt-2 font-[family-name:var(--font-fraunces)] text-xl font-semibold text-foreground">
-                          {selectedLead.enrichedData.stage}
-                        </p>
-                      </div>
-                      <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-                        <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Est. ARR</p>
-                        <p className="mt-2 font-[family-name:var(--font-fraunces)] text-xl font-semibold text-foreground">
-                          {selectedLead.enrichedData.arr}
-                        </p>
-                      </div>
+                      {isLoadingScore && selectedLead.enrichedData.icpScore === 0 ? (
+                        <>
+                          {[0, 1, 2, 3].map((i) => (
+                            <div key={i} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                              <div className="h-3 w-16 animate-pulse rounded bg-muted" />
+                              <div className="mt-4 h-8 w-12 animate-pulse rounded bg-muted" />
+                              {i === 0 && <div className="mt-3 h-2 w-full animate-pulse rounded-full bg-muted" />}
+                            </div>
+                          ))}
+                        </>
+                      ) : (
+                        <>
+                          <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">ICP Score</p>
+                            <div className="mt-2 flex items-end gap-2">
+                              <p className={cn('font-[family-name:var(--font-fraunces)] text-3xl font-semibold', getScoreColor(selectedLead.enrichedData.icpScore))}>
+                                {selectedLead.enrichedData.icpScore}
+                              </p>
+                              <span className="mb-1 font-mono text-xs text-muted-foreground">/ 100</span>
+                            </div>
+                            <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+                              <div
+                                className="h-full rounded-full bg-accent transition-all duration-700"
+                                style={{ width: `${selectedLead.enrichedData.icpScore}%` }}
+                              />
+                            </div>
+                          </div>
+                          <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Routing</p>
+                            <div className="mt-2">
+                              <span className={cn('inline-block rounded-md px-2 py-1 font-mono text-sm font-medium', getRoutingColor(selectedLead.enrichedData.routing.decision))}>
+                                {selectedLead.enrichedData.routing.decision}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Stage</p>
+                            <p className="mt-2 font-[family-name:var(--font-fraunces)] text-xl font-semibold text-foreground">
+                              {selectedLead.enrichedData.stage}
+                            </p>
+                          </div>
+                          <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Est. ARR</p>
+                            <p className="mt-2 font-[family-name:var(--font-fraunces)] text-xl font-semibold text-foreground">
+                              {selectedLead.enrichedData.arr}
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {/* ICP Fit Criteria */}
