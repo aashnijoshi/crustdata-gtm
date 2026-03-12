@@ -48,4 +48,4 @@ The full loop: one company name input → fully automated outbound.
 
 ## Built by
 
-Aashni Joshi — [LinkedIn](https://linkedin.com/in/aashnijoshi) · [Portfolio]([https://aashnijoshi.com/])
+Aashni Joshi — [LinkedIn](https://linkedin.com/in/aashnijoshi) · [Portfolio](https://aashnijoshi.com/)
