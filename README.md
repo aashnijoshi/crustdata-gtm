@@ -1,10 +1,10 @@
-# GTM OS — AI-Powered GTM Intelligence for Crustdata
-
-Built in 2 hours as a working demo of what a GTM Engineer can ship with AI.
+# Orbit - an agentic GTM engineer for Crustdata
 
 Paste any company name and description. GTM OS enriches the account, scores ICP fit 
 against Crustdata's buyer criteria, surfaces buy signals, generates a personalized 
 3-touch outbound sequence, and routes the lead — all in under 10 seconds.
+
+Try it: https://crustdata-gtm.vercel.app/
 
 ## What it does
 
@@ -48,4 +48,4 @@ The full loop: one company name input → fully automated outbound.
 
 ## Built by
 
-Aashni Joshi — [LinkedIn](https://linkedin.com/in/aashnijoshi) · [GitHub](https://github.com/aashnijoshi)
+Aashni Joshi — [LinkedIn](https://linkedin.com/in/aashnijoshi) · [Portfolio]([https://aashnijoshi.com/])
